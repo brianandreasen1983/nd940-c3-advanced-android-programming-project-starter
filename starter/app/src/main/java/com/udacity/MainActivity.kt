@@ -9,6 +9,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import android.widget.RadioButton
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import kotlinx.android.synthetic.main.activity_main.*
@@ -18,6 +21,7 @@ import kotlinx.android.synthetic.main.content_main.*
 class MainActivity : AppCompatActivity() {
 
     private var downloadID: Long = 0
+    private var selectedGitHubRepository: String? = null
 
     private lateinit var notificationManager: NotificationManager
     private lateinit var pendingIntent: PendingIntent
@@ -41,18 +45,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Get the URI from the selected git hub repository and download it otherwise provide a text that a file is not downloaded and don't call download.
     private fun download() {
-        val request =
-            DownloadManager.Request(Uri.parse(URL))
-                .setTitle(getString(R.string.app_name))
-                .setDescription(getString(R.string.app_description))
-                .setRequiresCharging(false)
-                .setAllowedOverMetered(true)
-                .setAllowedOverRoaming(true)
+        if (selectedGitHubRepository != null) {
+            val request =
+                    DownloadManager.Request(Uri.parse(selectedGitHubRepository))
+                            .setTitle(getString(R.string.app_name))
+                            .setDescription(getString(R.string.app_description))
+                            .setRequiresCharging(false)
+                            .setAllowedOverMetered(true)
+                            .setAllowedOverRoaming(true)
 
-        val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-        downloadID =
-            downloadManager.enqueue(request)// enqueue puts the download request in the queue.
+            val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+            downloadID =
+                    downloadManager.enqueue(request)// enqueue puts the download request in the queue.
+        } else {
+            var noSelectionText = "Please select a file to download"
+            showToast(noSelectionText)
+        }
+
     }
 
     companion object {
@@ -61,4 +72,45 @@ class MainActivity : AppCompatActivity() {
         private const val CHANNEL_ID = "channelId"
     }
 
+    // We don't want to do this here because the toast will show when the button is clicked.
+    // Good for a concept.
+    fun onRadioButtonClicked(view: View) {
+        if (view is RadioButton) {
+            val isChecked = view.isChecked
+
+            // Check which radio button was selected
+            when (view.getId()) {
+
+                R.id.rb_glide ->
+                    if (isChecked) {
+                        // Handle the click for this option here.
+                        selectedGitHubRepository = getString(R.string.glideGithubURL)
+                        val glideText = "Glide has been selected"
+                        showToast(glideText)
+                    }
+
+                R.id.rb_loadApp ->
+                    if (isChecked) {
+                        // Handle the click for this option here.
+                        selectedGitHubRepository = getString(R.string.loadAppGithubURL)
+                        val loadAppText = "Load App has been selected"
+                        showToast(loadAppText)
+                    }
+
+                R.id.rb_retrofit -> {
+                    if (isChecked) {
+                        // Handle this event
+                        selectedGitHubRepository = getString(R.string.retrofitGithubURL)
+                        val retrofitText = "Retrofit has been selected"
+                        showToast(retrofitText)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun showToast(text: String) {
+        val toast = Toast.makeText(this, text, Toast.LENGTH_SHORT)
+        toast.show()
+    }
 }
