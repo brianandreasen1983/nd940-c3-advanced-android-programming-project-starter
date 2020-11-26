@@ -63,7 +63,6 @@ class MainActivity : AppCompatActivity() {
             var noSelectionText = "Please select a file to download"
             showToast(noSelectionText)
         }
-
     }
 
     companion object {
@@ -72,18 +71,13 @@ class MainActivity : AppCompatActivity() {
         private const val CHANNEL_ID = "channelId"
     }
 
-    // We don't want to do this here because the toast will show when the button is clicked.
-    // Good for a concept.
     fun onRadioButtonClicked(view: View) {
         if (view is RadioButton) {
             val isChecked = view.isChecked
-
-            // Check which radio button was selected
             when (view.getId()) {
 
                 R.id.rb_glide ->
                     if (isChecked) {
-                        // Handle the click for this option here.
                         selectedGitHubRepository = getString(R.string.glideGithubURL)
                         val glideText = "Glide has been selected"
                         showToast(glideText)
@@ -91,7 +85,6 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.rb_loadApp ->
                     if (isChecked) {
-                        // Handle the click for this option here.
                         selectedGitHubRepository = getString(R.string.loadAppGithubURL)
                         val loadAppText = "Load App has been selected"
                         showToast(loadAppText)
@@ -99,7 +92,6 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.rb_retrofit -> {
                     if (isChecked) {
-                        // Handle this event
                         selectedGitHubRepository = getString(R.string.retrofitGithubURL)
                         val retrofitText = "Retrofit has been selected"
                         showToast(retrofitText)
