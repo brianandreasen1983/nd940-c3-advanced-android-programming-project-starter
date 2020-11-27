@@ -10,11 +10,6 @@ import android.util.AttributeSet
 import android.view.View
 import kotlin.properties.Delegates
 
-// TODO: Animate properties of the button once it is clicked.
-// TODO: Width of the button should be animated from left to right.
-// TODO: Text is changed dynamically based on different states of the button.
-// TODO: Circle gets to be animated from 0 to 360 degrees.
-// TODO: Have a background color to the button...this should be specified in attrs.xml
 class LoadingButton @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
@@ -22,10 +17,11 @@ class LoadingButton @JvmOverloads constructor(
     private var heightSize = 0
     // TODO: This may be able to be specified in either styles.xml or attrs.xml
     private var textFamilyName = "roboto"
-    private var label = "Testing"
+    private var label = "Download"
 
     private val valueAnimator = ValueAnimator()
 
+    // Unsure what this does specifically.
     private var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Completed) { p, old, new ->
     }
 
@@ -40,8 +36,9 @@ class LoadingButton @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        // TODO: Used as a concept this should be rendered dynamically based on the state of the button....
+        // Sets the initial background color for the button
         canvas.drawRGB(7, 194, 170)
+        // Sets the initial text for the button
         canvas.drawText(label,475f, 100f, paint)
     }
 

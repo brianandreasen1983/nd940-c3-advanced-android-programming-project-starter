@@ -19,5 +19,6 @@
     <string name="glideGithubURL">https://github.com/bumptech/glide</string>
     <string name="loadAppGithubURL">https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter</string>
     <string name="retrofitGithubURL">https://github.com/square/retrofit</string>
-
+    <string name="githubRepo_notification_channel_id" translatable="false">github_repo_channel</string>
+    <string name="githubRepo_notification_channel_name" translatable="true">Repo</string>
 </resources>

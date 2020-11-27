@@ -1,19 +1,28 @@
 package com.udacity
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
 import android.app.DownloadManager
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
+import com.udacity.utils.sendNotification
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
 
@@ -22,6 +31,7 @@ class MainActivity : AppCompatActivity() {
 
     private var downloadID: Long = 0
     private var selectedGitHubRepository: String? = null
+    lateinit var loadingButton: LoadingButton
 
     private lateinit var notificationManager: NotificationManager
     private lateinit var pendingIntent: PendingIntent
@@ -34,9 +44,16 @@ class MainActivity : AppCompatActivity() {
 
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
-        custom_button.setOnClickListener {
+        loadingButton = findViewById(R.id.loadingButton)
+
+        loadingButton.setOnClickListener {
+            animateOnDownloadButtonClicked()
             download()
         }
+
+        // Create the channel for the notification here
+        // Put the channel Id and the channel name into strings.xml
+//        createChannel(getString(R.string.githubRepo_notification_channel_id), getString(R.string.githubRepo_notification_channel_name))
     }
 
     private val receiver = object : BroadcastReceiver() {
@@ -48,6 +65,13 @@ class MainActivity : AppCompatActivity() {
     // Get the URI from the selected git hub repository and download it otherwise provide a text that a file is not downloaded and don't call download.
     private fun download() {
         if (selectedGitHubRepository != null) {
+            // Testing notification this is not the final implementation
+            // We will eventually want to move this code so that the notification is only called when the download is complete.
+            // Once the download is complete we will want to open it in the DetailActivity screen
+            notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
+            createChannel(getString(R.string.githubRepo_notification_channel_id), getString(R.string.githubRepo_notification_channel_name))
+            notificationManager.sendNotification("Downloading.....", applicationContext)
+
             val request =
                     DownloadManager.Request(Uri.parse(selectedGitHubRepository))
                             .setTitle(getString(R.string.app_name))
@@ -65,12 +89,27 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Unsure what or why we need the companion object for this project.
     companion object {
         private const val URL =
             "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter/archive/master.zip"
         private const val CHANNEL_ID = "channelId"
     }
 
+    // Disable the button while the animation is running
+    // Read more about extension functions in Kotlin slightly different than C#.
+    private fun ObjectAnimator.disableViewDuringAnimation(view: View) {
+        addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationStart(animation: Animator?) {
+                view.isEnabled = false
+            }
+            override fun onAnimationEnd(animation: Animator?) {
+                view.isEnabled = true
+            }
+        })
+    }
+
+    // Responsible for assigning the correct github repository
     fun onRadioButtonClicked(view: View) {
         if (view is RadioButton) {
             val isChecked = view.isChecked
@@ -105,4 +144,25 @@ class MainActivity : AppCompatActivity() {
         val toast = Toast.makeText(this, text, Toast.LENGTH_SHORT)
         toast.show()
     }
+
+    // TODO: Complete the animation function and test it to ensure completion of the Custom Views Rubric.
+    // The custom button properties like background, text and additional circle are animated by changing the width, text, and color
+    private fun animateOnDownloadButtonClicked() {
+    }
+
+    // TODO: Create a notification channel
+    private fun createChannel(channelId: String, channelName: String) {
+        // Check to see if the API Level is a API Level 26 as it requires a channel to be created
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
+            notificationChannel.enableLights(true)
+            notificationChannel.lightColor = Color.RED
+            notificationChannel.enableVibration(true)
+            notificationChannel.description = "Download is done!"
+
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
+    }
+
+
 }

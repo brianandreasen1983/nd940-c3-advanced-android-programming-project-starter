@@ -44,7 +44,7 @@
     <!-- TODO: Need a way to animate-->
     <!-- TODO: Need a way to set the text dynamically-->
     <com.udacity.LoadingButton
-        android:id="@+id/custom_button"
+        android:id="@+id/loadingButton"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_margin="20dp"
