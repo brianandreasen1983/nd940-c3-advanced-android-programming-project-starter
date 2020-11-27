@@ -15,6 +15,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.view.View
 import android.widget.Button
 import android.widget.RadioButton
@@ -59,6 +60,30 @@ class MainActivity : AppCompatActivity() {
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+
+//            if (downloadID == id) {
+//                val action = intent.action
+//                if (DownloadManager.ACTION_DOWNLOAD_COMPLETE == action) {
+//                    val query = DownloadManager.Query()
+//                    query.setFilterById(downloadID)
+//                    val c = downloadManager!!.query(query)
+//                    if (c.moveToFirst()) {
+//                        val columnIndex = c
+//                                .getColumnIndex(DownloadManager.COLUMN_STATUS)
+//                        if (DownloadManager.STATUS_SUCCESSFUL == c
+//                                        .getInt(columnIndex)
+//                        ) {
+//                            check_status = " Success"
+//                        }
+//                    }
+//                }
+//
+//                // download completed
+//                // This is likely the observable that is being called to check for state.
+//                //custom_button.hasCompletedDownload()
+//
+//                //sendNotification(downloadID.toInt())
+//            }
         }
     }
 
@@ -70,7 +95,7 @@ class MainActivity : AppCompatActivity() {
             // Once the download is complete we will want to open it in the DetailActivity screen
             notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
             createChannel(getString(R.string.githubRepo_notification_channel_id), getString(R.string.githubRepo_notification_channel_name))
-            notificationManager.sendNotification("Downloading.....", applicationContext)
+            notificationManager.sendNotification("Downloading.....", applicationContext, "In Progress")
 
             val request =
                     DownloadManager.Request(Uri.parse(selectedGitHubRepository))
@@ -80,12 +105,12 @@ class MainActivity : AppCompatActivity() {
                             .setAllowedOverMetered(true)
                             .setAllowedOverRoaming(true)
 
+
             val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
             downloadID =
                     downloadManager.enqueue(request)// enqueue puts the download request in the queue.
         } else {
-            var noSelectionText = "Please select a file to download"
-            showToast(noSelectionText)
+            showToast(getString(R.string.noRepotSelectedText))
         }
     }
 
@@ -118,22 +143,19 @@ class MainActivity : AppCompatActivity() {
                 R.id.rb_glide ->
                     if (isChecked) {
                         selectedGitHubRepository = getString(R.string.glideGithubURL)
-                        val glideText = "Glide has been selected"
-                        showToast(glideText)
+                        showToast(getString(R.string.glideText))
                     }
 
                 R.id.rb_loadApp ->
                     if (isChecked) {
                         selectedGitHubRepository = getString(R.string.loadAppGithubURL)
-                        val loadAppText = "Load App has been selected"
-                        showToast(loadAppText)
+                        showToast(getString(R.string.loadAppText))
                     }
 
                 R.id.rb_retrofit -> {
                     if (isChecked) {
                         selectedGitHubRepository = getString(R.string.retrofitGithubURL)
-                        val retrofitText = "Retrofit has been selected"
-                        showToast(retrofitText)
+                        showToast(getString(R.string.retrofitText))
                     }
                 }
             }
@@ -150,7 +172,6 @@ class MainActivity : AppCompatActivity() {
     private fun animateOnDownloadButtonClicked() {
     }
 
-    // TODO: Create a notification channel
     private fun createChannel(channelId: String, channelName: String) {
         // Check to see if the API Level is a API Level 26 as it requires a channel to be created
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

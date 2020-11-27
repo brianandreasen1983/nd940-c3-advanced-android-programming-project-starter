@@ -15,23 +15,26 @@ class LoadingButton @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
     private var widthSize = 0
     private var heightSize = 0
-    // TODO: This may be able to be specified in either styles.xml or attrs.xml
-    private var textFamilyName = "roboto"
+    private var robotoFont = "roboto"
     private var label = "Download"
 
+    // TODO: This should be used to animate the action of the download button
     private val valueAnimator = ValueAnimator()
 
     // Unsure what this does specifically.
     private var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Completed) { p, old, new ->
+        // If the button is loading then show the loading text and start the animation
+
+        // If the button state is completed then show the Completed text and end the animation
+
+        // Consider other values and don't forget to call invalidate() to redraw the button here.
     }
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         textAlign = Paint.Align.CENTER
-        // TODO: Would be best provided by attrs.xml
         textSize = 50.0f
-        // TODO: maybe attrs.xml?
-        typeface = Typeface.create(textFamilyName, Typeface.NORMAL)
+        typeface = Typeface.create(robotoFont, Typeface.NORMAL)
     }
 
     override fun onDraw(canvas: Canvas) {
