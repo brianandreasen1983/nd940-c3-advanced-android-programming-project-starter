@@ -95,7 +95,8 @@ class MainActivity : AppCompatActivity() {
             // Once the download is complete we will want to open it in the DetailActivity screen
             notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
             createChannel(getString(R.string.githubRepo_notification_channel_id), getString(R.string.githubRepo_notification_channel_name))
-            notificationManager.sendNotification("Downloading.....", applicationContext, "In Progress")
+            // This shall be moved tomorrow to the right place this assumes the download is complete.
+            notificationManager.sendNotification(selectedGitHubRepository.toString(), applicationContext, "In Progress")
 
             val request =
                     DownloadManager.Request(Uri.parse(selectedGitHubRepository))
@@ -116,8 +117,6 @@ class MainActivity : AppCompatActivity() {
 
     // Unsure what or why we need the companion object for this project.
     companion object {
-        private const val URL =
-            "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter/archive/master.zip"
         private const val CHANNEL_ID = "channelId"
     }
 
