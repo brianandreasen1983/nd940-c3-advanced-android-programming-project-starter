@@ -21,11 +21,10 @@
     <string name="retrofitGithubURL">https://github.com/square/retrofit</string>
     <string name="githubRepo_notification_channel_id" translatable="false">github_repo_channel</string>
     <string name="githubRepo_notification_channel_name" translatable="true">Repo</string>
-    <string name="loadAppText">Load App has been selected</string>
-    <string name="glideText">Glide has been selected</string>
-    <string name="retrofitText">Retrofit has been selected</string>
+    <string name="loadAppText">LoadApp repository has been selected click Download to start.</string>
+    <string name="glideText">Glide repository has been selected click Download to start.</string>
+    <string name="retrofitText">Retrofit repository has been selected click Download to start</string>
     <string name="noRepotSelectedText">Please select a file to download</string>
     <string name="loading">Loading</string>
-    <string name="download">Downloading....</string>
-
+    <string name="download">Download</string>
 </resources>

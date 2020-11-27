@@ -32,17 +32,13 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
     // The first thing we do is to create the intent for the notification which launches the main activity.
     val notificationBuilder = NotificationCompat.Builder(applicationContext, applicationContext.getString(R.string.githubRepo_notification_channel_id))
 
-    // The second thing we need to do is the following
-    // Set the title, text, and ion to the notificationBuilder
-            // Maybe setup a small icon if its available?
-            // We could use the github image :D
             .setSmallIcon(R.drawable.ic_assistant_black_24dp)
             .setContentTitle("Download Complete")
             .setContentText(messageBody)
             .setContentIntent(contentPendingIntent)
             .setAutoCancel(true)
-            // Set Priority for devices lower than API Level 25
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+
     //Deliver the notification
     notify(NOTIFICATION_ID, notificationBuilder.build())
 }

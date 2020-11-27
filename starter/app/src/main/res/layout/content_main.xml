@@ -10,49 +10,56 @@
     tools:showIn="@layout/activity_main">
 
     <RadioGroup
+        android:id="@+id/radioGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/custom_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/imageView">
 
         <RadioButton
             android:id="@+id/rb_glide"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/glide"
-            android:onClick="onRadioButtonClicked" />
+            android:onClick="onRadioButtonClicked"
+            android:text="@string/glide" />
 
         <RadioButton
             android:id="@+id/rb_loadApp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/loadApp"
-            android:onClick="onRadioButtonClicked"/>
+            android:onClick="onRadioButtonClicked"
+            android:text="@string/loadApp" />
 
         <RadioButton
             android:id="@+id/rb_retrofit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/retrofit"
-            android:onClick="onRadioButtonClicked"/>
+            android:onClick="onRadioButtonClicked"
+            android:text="@string/retrofit" />
     </RadioGroup>
 
-    <!-- TODO: Need a way to animate-->
-    <!-- TODO: Need a way to set the text dynamically-->
     <com.udacity.LoadingButton
         android:id="@+id/loadingButton"
         android:layout_width="0dp"
-        android:layout_height="60dp"
+        android:layout_height="40dp"
         android:layout_margin="20dp"
         android:layout_marginStart="32dp"
         android:layout_marginEnd="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="685dp"
+        android:layout_height="288dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/outline_cloud_download_24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

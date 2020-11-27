@@ -7,25 +7,24 @@ import android.app.DownloadManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
+import android.database.Cursor
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.provider.MediaStore
 import android.view.View
-import android.widget.Button
 import android.widget.RadioButton
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.udacity.utils.sendNotification
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.content_main.*
+import java.io.File
 
 
 class MainActivity : AppCompatActivity() {
@@ -48,55 +47,62 @@ class MainActivity : AppCompatActivity() {
         loadingButton = findViewById(R.id.loadingButton)
 
         loadingButton.setOnClickListener {
-            animateOnDownloadButtonClicked()
             download()
         }
-
-        // Create the channel for the notification here
-        // Put the channel Id and the channel name into strings.xml
-//        createChannel(getString(R.string.githubRepo_notification_channel_id), getString(R.string.githubRepo_notification_channel_name))
     }
 
+    // Receiver is already registered in onCreate no need to register it.
     private val receiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            val id = intent?.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+        @RequiresApi(Build.VERSION_CODES.Q)
+        override fun onReceive(context: Context?, intent: Intent) {
+            val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            val action = intent.action
 
-//            if (downloadID == id) {
-//                val action = intent.action
-//                if (DownloadManager.ACTION_DOWNLOAD_COMPLETE == action) {
-//                    val query = DownloadManager.Query()
-//                    query.setFilterById(downloadID)
-//                    val c = downloadManager!!.query(query)
-//                    if (c.moveToFirst()) {
-//                        val columnIndex = c
-//                                .getColumnIndex(DownloadManager.COLUMN_STATUS)
-//                        if (DownloadManager.STATUS_SUCCESSFUL == c
-//                                        .getInt(columnIndex)
-//                        ) {
-//                            check_status = " Success"
-//                        }
-//                    }
-//                }
-//
-//                // download completed
-//                // This is likely the observable that is being called to check for state.
-//                //custom_button.hasCompletedDownload()
-//
-//                //sendNotification(downloadID.toInt())
-//            }
+            if(downloadID == id){
+                if (action.equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
+                    val query = DownloadManager.Query()
+                    query.setFilterById(intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0));
+                    val manager = context!!.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                    val cursor: Cursor = manager.query(query)
+                    if (cursor.moveToFirst()) {
+                        if (cursor.count > 0) {
+                            val status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
+                            if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                                val downloadedFile = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))
+
+                                // Create a file from the file API
+                                var file = File(downloadedFile)
+
+                                // Can we put the file Object created from the File API into the downloads folder?
+                                val contentValues = ContentValues().apply {
+                                    put(MediaStore.Downloads.TITLE, file.nameWithoutExtension)
+                                    put(MediaStore.Downloads.DISPLAY_NAME, file.nameWithoutExtension)
+                                    put(MediaStore.Downloads.MIME_TYPE, MediaStore.Downloads.CONTENT_TYPE)
+                                }
+
+                                // Insert the record into the database?
+                                val database = contentResolver
+                                database.insert(MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL), contentValues);
+
+                                notificationManager.sendNotification(selectedGitHubRepository.toString(), applicationContext, "Complete")
+
+                            } else {
+                                // So something here on failed.
+                                val message = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_REASON))
+                                notificationManager.sendNotification(selectedGitHubRepository.toString(), applicationContext, "Failed")
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
     // Get the URI from the selected git hub repository and download it otherwise provide a text that a file is not downloaded and don't call download.
     private fun download() {
         if (selectedGitHubRepository != null) {
-            // Testing notification this is not the final implementation
-            // We will eventually want to move this code so that the notification is only called when the download is complete.
-            // Once the download is complete we will want to open it in the DetailActivity screen
             notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
             createChannel(getString(R.string.githubRepo_notification_channel_id), getString(R.string.githubRepo_notification_channel_name))
-            // This shall be moved tomorrow to the right place this assumes the download is complete.
-            notificationManager.sendNotification(selectedGitHubRepository.toString(), applicationContext, "In Progress")
 
             val request =
                     DownloadManager.Request(Uri.parse(selectedGitHubRepository))
@@ -167,7 +173,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // TODO: Complete the animation function and test it to ensure completion of the Custom Views Rubric.
-    // The custom button properties like background, text and additional circle are animated by changing the width, text, and color
+    // May or may not be needed we will see.
     private fun animateOnDownloadButtonClicked() {
     }
 
