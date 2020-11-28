@@ -27,7 +27,7 @@ class LoadingButton @JvmOverloads constructor(
         when(newValue) {
             ButtonState.Loading -> {
                 // Animate this value?
-                setLoadingButtonBackgroundColor(0, 67, 73)
+                loadingButton.setBackgroundColor(Color.rgb(0, 67, 73))
                 label = "Downloading..."
                 disableLoadingButton()
 //                startAnimation()
@@ -35,7 +35,7 @@ class LoadingButton @JvmOverloads constructor(
 
             ButtonState.Completed -> {
                 // Animate this?
-                setLoadingButtonBackgroundColor(7, 194, 170)
+                loadingButton.setBackgroundColor(Color.rgb(7, 194, 170))
                 label = "Download"
                 enableLoadingButton()
 //                stopAnimation()
@@ -56,6 +56,13 @@ class LoadingButton @JvmOverloads constructor(
         color = Color.WHITE
         typeface = Typeface.create(robotoFont, Typeface.NORMAL)
     }
+
+    private val rect = RectF(
+            740f,
+            50f,
+            810f,
+            110f
+    )
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -83,10 +90,6 @@ class LoadingButton @JvmOverloads constructor(
     // Used to stop animations
     private fun stopAnimation() {
         valueAnimator.end()
-    }
-
-    private fun setLoadingButtonBackgroundColor(red: Int, green: Int, blue: Int) {
-        loadingButton.setBackgroundColor(Color.rgb(red, green, blue))
     }
 
     private fun disableLoadingButton() {
