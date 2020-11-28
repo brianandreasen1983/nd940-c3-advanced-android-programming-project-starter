@@ -45,10 +45,9 @@ class LoadingButton @JvmOverloads constructor(
                 // Do nothing just here so the when statement is exhaustive :<
             }
         }
-        // Redraw the button
-        invalidate()
     }
 
+    // Strictly for just the text at the moment.
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
         textAlign = Paint.Align.CENTER
@@ -66,7 +65,12 @@ class LoadingButton @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
+        paint.strokeWidth = 0f
+
         canvas.drawText(label,475f, 70f, paint)
+
+        // Animate the fill and the color of the background?
+
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
