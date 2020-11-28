@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
         loadingButton = findViewById(R.id.loadingButton)
-
+        loadingButton.setLoadingButtonState(ButtonState.Completed)
         loadingButton.setOnClickListener {
             download()
         }
@@ -66,10 +66,10 @@ class MainActivity : AppCompatActivity() {
                         if (cursor.count > 0) {
                             val status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
                             if (status == DownloadManager.STATUS_SUCCESSFUL) {
-                                 // Send a notification...
+                                loadingButton.setLoadingButtonState(ButtonState.Completed)
                                 notificationManager.sendNotification(selectedGitHubRepository.toString(), applicationContext, "Complete")
                             } else {
-                                // So something here on failed.
+                                loadingButton.setLoadingButtonState(ButtonState.Completed)
                                 notificationManager.sendNotification(selectedGitHubRepository.toString(), applicationContext, "Failed")
                             }
                         }
@@ -81,7 +81,11 @@ class MainActivity : AppCompatActivity() {
 
     // Get the URI from the selected git hub repository and download it otherwise provide a text that a file is not downloaded and don't call download.
     private fun download() {
+        loadingButton.setLoadingButtonState(ButtonState.Clicked)
+        animateOnDownload()
+
         if (selectedGitHubRepository != null) {
+            loadingButton.setLoadingButtonState(ButtonState.Loading)
             notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
             createChannel(getString(R.string.githubRepo_notification_channel_id), getString(R.string.githubRepo_notification_channel_name))
 
@@ -105,6 +109,8 @@ class MainActivity : AppCompatActivity() {
             downloadID =
                     downloadManager.enqueue(request)// enqueue puts the download request in the queue.
         } else {
+            // Might need to set button state to its default of Completed.
+//            loadingButton.setLoadingButtonState(ButtonState.Completed)
             showToast(getString(R.string.noRepotSelectedText))
         }
     }
@@ -157,15 +163,21 @@ class MainActivity : AppCompatActivity() {
         toast.show()
     }
 
-    // TODO: Complete the animation function and test it to ensure completion of the Custom Views Rubric.
-    // May or may not be needed we will see.
-    private fun animateOnDownloadButtonClicked() {
+    // Used for animating the button background and such definitely not final implementation lol......
+    private fun animateOnDownload() {
+        val animator = ObjectAnimator.ofFloat(loadingButton, View.TRANSLATION_Y, 200f)
+        // tells the animation how many times to repeat after the initial run.
+        animator.repeatCount = 1
+        // tells the behavior its supposed to have during the repetition.
+        animator.repeatMode = ObjectAnimator.REVERSE
+        animator.disableViewDuringAnimation(loadingButton)
+        animator.start()
     }
 
     private fun createChannel(channelId: String, channelName: String) {
         // Check to see if the API Level is a API Level 26 as it requires a channel to be created
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationChannel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
+            val notificationChannel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
             notificationChannel.enableLights(true)
             notificationChannel.lightColor = Color.RED
             notificationChannel.enableVibration(true)

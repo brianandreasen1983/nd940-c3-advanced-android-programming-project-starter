@@ -1,10 +1,15 @@
 package com.udacity
 
+import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.Toast
+import kotlinx.android.synthetic.main.content_main.view.*
 import kotlin.properties.Delegates
 
 class LoadingButton @JvmOverloads constructor(
@@ -14,17 +19,37 @@ class LoadingButton @JvmOverloads constructor(
     private var heightSize = 0
     private var robotoFont = "roboto"
     private var label = "Download"
-    // May need @Volile we will see.
-    private var progress: Double = 0.0
-    private var textColor: Int = Color.BLACK // default color
 
 
-
-    // TODO: This should be used to animate the action of the download button
     private val valueAnimator = ValueAnimator()
 
     // Unsure what this does specifically.
-    private var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Completed) { p, old, new ->
+    private var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Completed) { property, oldValue, newValue ->
+        when(newValue) {
+            ButtonState.Loading -> {
+                // Animate this value?
+//                loadingButton.setBackgroundColor(Color.rgb(0, 67, 73))
+                setLoadingButtonBackgroundColor(0, 67, 73)
+                label = "Downloading..."
+                disableLoadingButton()
+//                startAnimation()
+            }
+
+            ButtonState.Completed -> {
+                // Animate this?
+//                loadingButton.setBackgroundColor(Color.rgb(7, 194, 170))
+                setLoadingButtonBackgroundColor(7, 194, 170)
+                label = "Download"
+                enableLoadingButton()
+//                stopAnimation()
+            }
+
+            ButtonState.Clicked -> {
+                // Do nothing just here so the when statement is exhaustive :<
+            }
+        }
+        // Redraw the button
+        invalidate()
     }
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -37,17 +62,7 @@ class LoadingButton @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        // Sets the initial background color for the button
-        canvas.drawRGB(7, 194, 170)
-        // Sets the initial text for the button
         canvas.drawText(label,475f, 70f, paint)
-
-        // If the Button State is Clicked
-        // If the Button State is Loading
-
-        // If the Button State is Completed
-
-
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -73,4 +88,20 @@ class LoadingButton @JvmOverloads constructor(
         valueAnimator.end()
     }
 
+    fun setLoadingButtonBackgroundColor(red: Int, green: Int, blue: Int) {
+        loadingButton.setBackgroundColor(Color.rgb(red, green, blue))
+    }
+
+    // Used to provide a way to change the button state from the main activity
+    fun setLoadingButtonState(state: ButtonState) {
+        buttonState = state
+    }
+
+    private fun disableLoadingButton() {
+        loadingButton.isEnabled = false
+    }
+
+    private fun enableLoadingButton() {
+        loadingButton.isEnabled = true
+    }
 }
