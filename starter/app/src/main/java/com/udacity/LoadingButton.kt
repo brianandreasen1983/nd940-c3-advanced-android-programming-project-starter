@@ -23,12 +23,10 @@ class LoadingButton @JvmOverloads constructor(
 
     private val valueAnimator = ValueAnimator()
 
-    // Unsure what this does specifically.
     private var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Completed) { property, oldValue, newValue ->
         when(newValue) {
             ButtonState.Loading -> {
                 // Animate this value?
-//                loadingButton.setBackgroundColor(Color.rgb(0, 67, 73))
                 setLoadingButtonBackgroundColor(0, 67, 73)
                 label = "Downloading..."
                 disableLoadingButton()
@@ -37,7 +35,6 @@ class LoadingButton @JvmOverloads constructor(
 
             ButtonState.Completed -> {
                 // Animate this?
-//                loadingButton.setBackgroundColor(Color.rgb(7, 194, 170))
                 setLoadingButtonBackgroundColor(7, 194, 170)
                 label = "Download"
                 enableLoadingButton()
@@ -88,13 +85,8 @@ class LoadingButton @JvmOverloads constructor(
         valueAnimator.end()
     }
 
-    fun setLoadingButtonBackgroundColor(red: Int, green: Int, blue: Int) {
+    private fun setLoadingButtonBackgroundColor(red: Int, green: Int, blue: Int) {
         loadingButton.setBackgroundColor(Color.rgb(red, green, blue))
-    }
-
-    // Used to provide a way to change the button state from the main activity
-    fun setLoadingButtonState(state: ButtonState) {
-        buttonState = state
     }
 
     private fun disableLoadingButton() {
@@ -103,5 +95,10 @@ class LoadingButton @JvmOverloads constructor(
 
     private fun enableLoadingButton() {
         loadingButton.isEnabled = true
+    }
+
+    // Used to provide a way to change the button state from the main activity
+    fun setLoadingButtonState(state: ButtonState) {
+        buttonState = state
     }
 }
