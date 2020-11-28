@@ -2,6 +2,7 @@ package com.udacity
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_detail.*
 import kotlinx.android.synthetic.main.content_detail.*
@@ -15,7 +16,6 @@ class DetailActivity : AppCompatActivity() {
         setContentView(R.layout.activity_detail)
         setSupportActionBar(toolbar)
 
-        // Used to return the user back to the main activity when clicking OK.
         ok_button.setOnClickListener {
             returnToMainActivity()
         }
@@ -26,8 +26,8 @@ class DetailActivity : AppCompatActivity() {
         tv_status.text = status
     }
 
-    private fun returnToMainActivity() {
-        val  mainActivity = Intent(this, MainActivity.javaClass)
+    fun returnToMainActivity() {
+        val  mainActivity = Intent(this, MainActivity::class.java)
         startActivity(mainActivity)
     }
 }

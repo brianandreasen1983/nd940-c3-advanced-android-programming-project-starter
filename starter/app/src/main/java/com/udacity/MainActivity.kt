@@ -51,14 +51,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Receiver is already registered in onCreate no need to register it.
     private val receiver = object : BroadcastReceiver() {
-        @RequiresApi(Build.VERSION_CODES.Q)
         override fun onReceive(context: Context?, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
             val action = intent.action
 
-            if(downloadID == id){
+            if (downloadID == id) {
                 if (action.equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
                     val query = DownloadManager.Query()
                     query.setFilterById(intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0));
@@ -68,27 +66,10 @@ class MainActivity : AppCompatActivity() {
                         if (cursor.count > 0) {
                             val status = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_STATUS))
                             if (status == DownloadManager.STATUS_SUCCESSFUL) {
-                                val downloadedFile = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))
-
-                                // Create a file from the file API
-                                var file = File(downloadedFile)
-
-                                // Can we put the file Object created from the File API into the downloads folder?
-                                val contentValues = ContentValues().apply {
-                                    put(MediaStore.Downloads.TITLE, file.nameWithoutExtension)
-                                    put(MediaStore.Downloads.DISPLAY_NAME, file.nameWithoutExtension)
-                                    put(MediaStore.Downloads.MIME_TYPE, MediaStore.Downloads.CONTENT_TYPE)
-                                }
-
-                                // Insert the record into the database?
-                                val database = contentResolver
-                                database.insert(MediaStore.Downloads.getContentUri(MediaStore.VOLUME_EXTERNAL), contentValues);
-
+                                 // Send a notification...
                                 notificationManager.sendNotification(selectedGitHubRepository.toString(), applicationContext, "Complete")
-
                             } else {
                                 // So something here on failed.
-                                val message = cursor.getInt(cursor.getColumnIndex(DownloadManager.COLUMN_REASON))
                                 notificationManager.sendNotification(selectedGitHubRepository.toString(), applicationContext, "Failed")
                             }
                         }
@@ -104,6 +85,12 @@ class MainActivity : AppCompatActivity() {
             notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
             createChannel(getString(R.string.githubRepo_notification_channel_id), getString(R.string.githubRepo_notification_channel_name))
 
+            var file = File(getExternalFilesDir(null), "/repos")
+
+            if (!file.exists()) {
+                file.mkdirs()
+            }
+
             val request =
                     DownloadManager.Request(Uri.parse(selectedGitHubRepository))
                             .setTitle(getString(R.string.app_name))
@@ -111,6 +98,7 @@ class MainActivity : AppCompatActivity() {
                             .setRequiresCharging(false)
                             .setAllowedOverMetered(true)
                             .setAllowedOverRoaming(true)
+                            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/repos/repository.zip")
 
 
             val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
@@ -121,13 +109,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Unsure what or why we need the companion object for this project.
     companion object {
         private const val CHANNEL_ID = "channelId"
     }
 
     // Disable the button while the animation is running
-    // Read more about extension functions in Kotlin slightly different than C#.
     private fun ObjectAnimator.disableViewDuringAnimation(view: View) {
         addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationStart(animation: Animator?) {
@@ -144,7 +130,6 @@ class MainActivity : AppCompatActivity() {
         if (view is RadioButton) {
             val isChecked = view.isChecked
             when (view.getId()) {
-
                 R.id.rb_glide ->
                     if (isChecked) {
                         selectedGitHubRepository = getString(R.string.glideGithubURL)
@@ -189,6 +174,4 @@ class MainActivity : AppCompatActivity() {
             notificationManager.createNotificationChannel(notificationChannel)
         }
     }
-
-
-}
+} // End of Main Activity
