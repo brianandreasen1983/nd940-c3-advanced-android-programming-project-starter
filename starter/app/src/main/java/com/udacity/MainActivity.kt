@@ -82,7 +82,6 @@ class MainActivity : AppCompatActivity() {
     // Get the URI from the selected git hub repository and download it otherwise provide a text that a file is not downloaded and don't call download.
     private fun download() {
         loadingButton.setLoadingButtonState(ButtonState.Clicked)
-        animateOnDownload()
 
         if (selectedGitHubRepository != null) {
             loadingButton.setLoadingButtonState(ButtonState.Loading)
@@ -109,8 +108,7 @@ class MainActivity : AppCompatActivity() {
             downloadID =
                     downloadManager.enqueue(request)// enqueue puts the download request in the queue.
         } else {
-            // Might need to set button state to its default of Completed.
-//            loadingButton.setLoadingButtonState(ButtonState.Completed)
+            loadingButton.setLoadingButtonState(ButtonState.Completed)
             showToast(getString(R.string.noRepotSelectedText))
         }
     }
@@ -163,17 +161,6 @@ class MainActivity : AppCompatActivity() {
         toast.show()
     }
 
-    // Used for animating the button background and such definitely not final implementation lol......
-    private fun animateOnDownload() {
-        val animator = ObjectAnimator.ofFloat(loadingButton, View.TRANSLATION_Y, 200f)
-        // tells the animation how many times to repeat after the initial run.
-        animator.repeatCount = 1
-        // tells the behavior its supposed to have during the repetition.
-        animator.repeatMode = ObjectAnimator.REVERSE
-        animator.disableViewDuringAnimation(loadingButton)
-        animator.start()
-    }
-
     private fun createChannel(channelId: String, channelName: String) {
         // Check to see if the API Level is a API Level 26 as it requires a channel to be created
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -186,4 +173,5 @@ class MainActivity : AppCompatActivity() {
             notificationManager.createNotificationChannel(notificationChannel)
         }
     }
+
 } // End of Main Activity

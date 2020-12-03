@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="748d6a68-fe05-47e2-b1cf-19ad7a4606b6" name="Default Changelist" comment="" />
+    <list default="true" id="748d6a68-fe05-47e2-b1cf-19ad7a4606b6" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/starter/app/src/main/java/com/udacity/LoadingButton.kt" beforeDir="false" afterPath="$PROJECT_DIR$/starter/app/src/main/java/com/udacity/LoadingButton.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter/app/src/main/java/com/udacity/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/starter/app/src/main/java/com/udacity/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter/app/src/main/res/layout/content_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/starter/app/src/main/res/layout/content_main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/starter/app/src/main/res/values/attrs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/starter/app/src/main/res/values/attrs.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
